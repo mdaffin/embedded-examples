@@ -1,3 +1,7 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
 OUTDIR=out
 mkdir -p "${OUTDIR}"
 rm -f "${OUTDIR}"/*

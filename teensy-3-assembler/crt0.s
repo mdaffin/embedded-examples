@@ -1,6 +1,36 @@
+/*
+Copyright (c) 2015 Michael Daffin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+/*
+Example assembler code to make the led on the teensy 3.1/3.2 blink.
+
+This text refers to the programmers manual for the MK20DX256VLH7. You can
+obtain it from: https://www.pjrc.com/teensy/K20P64M72SF1RM.pdf
+*/
+
     .syntax unified
 
     .section ".vectors"
+    // Interrupt vector definitions - page 63
     .long _estack //  0 ARM: Initial Stack Pointer
     .long _startup //  1 ARM: Initial Program Counter
     //  2 ARM: Non-maskable Interrupt (NMI)
@@ -8,112 +38,9 @@
     //  4 ARM: MemManage Fault
     //  5 ARM: Bus Fault
     //  6 ARM: Usage Fault
-    //  7 --
-    //  8 --
-    //  9 --
-    // 10 --
-    // 11 ARM: Supervisor call (SVCall)
-    // 12 ARM: Debug Monitor
-    // 13 --
-    // 14 ARM: Pendable req serv(PendableSrvReq)
-    // 15 ARM: System tick timer (SysTick)
-    // 16 DMA channel 0 transfer complete
-    // 17 DMA channel 1 transfer complete
-    // 18 DMA channel 2 transfer complete
-    // 19 DMA channel 3 transfer complete
-    // 20 DMA channel 4 transfer complete
-    // 21 DMA channel 5 transfer complete
-    // 22 DMA channel 6 transfer complete
-    // 23 DMA channel 7 transfer complete
-    // 24 DMA channel 8 transfer complete
-    // 25 DMA channel 9 transfer complete
-    // 26 DMA channel 10 transfer complete
-    // 27 DMA channel 11 transfer complete
-    // 28 DMA channel 12 transfer complete
-    // 29 DMA channel 13 transfer complete
-    // 30 DMA channel 14 transfer complete
-    // 31 DMA channel 15 transfer complete
-    // 32 DMA error interrupt channel
-    // 33 --
-    // 34 Flash Memory Command complete
-    // 35 Flash Read collision
-    // 36 Low-voltage detect/warning
-    // 37 Low Leakage Wakeup
-    // 38 Both EWM and WDOG interrupt
-    // 39 --
-    // 40 I2C0
-    // 41 I2C1
-    // 42 SPI0
-    // 43 SPI1
-    // 44 --
-    // 45 CAN OR'ed Message buffer (0-15)
-    // 46 CAN Bus Off
-    // 47 CAN Error
-    // 48 CAN Transmit Warning
-    // 49 CAN Receive Warning
-    // 50 CAN Wake Up
-    // 51 I2S0 Transmit
-    // 52 I2S0 Receive
-    // 53 --
-    // 54 --
-    // 55 --
-    // 56 --
-    // 57 --
-    // 58 --
-    // 59 --
-    // 60 UART0 CEA709.1-B (LON) status
-    // 61 UART0 status
-    // 62 UART0 error
-    // 63 UART1 status
-    // 64 UART1 error
-    // 65 UART2 status
-    // 66 UART2 error
-    // 67 --
-    // 68 --
-    // 69 --
-    // 70 --
-    // 71 --
-    // 72 --
-    // 73 ADC0
-    // 74 ADC1
-    // 75 CMP0
-    // 76 CMP1
-    // 77 CMP2
-    // 78 FTM0
-    // 79 FTM1
-    // 80 FTM2
-    // 81 CMT
-    // 82 RTC Alarm interrupt
-    // 83 RTC Seconds interrupt
-    // 84 PIT Channel 0
-    // 85 PIT Channel 1
-    // 86 PIT Channel 2
-    // 87 PIT Channel 3
-    // 88 PDB Programmable Delay Block
-    // 89 USB OTG
-    // 90 USB Charger Detect
-    // 91 --
-    // 92 --
-    // 93 --
-    // 94 --
-    // 95 --
-    // 96 --
-    // 97 DAC0
-    // 98 --
-    // 99 TSI0
-    // 100 MCG
-    // 101 Low Power Timer
-    // 102 --
-    // 103 Pin detect (Port A)
-    // 104 Pin detect (Port B)
-    // 105 Pin detect (Port C)
-    // 106 Pin detect (Port D)
-    // 107 Pin detect (Port E)
-    // 108 --
-    // 109 --
-    // 110 Software interrupt
   
     .section ".flashconfig"
+    // Flash Configuration located at 0x400 - page 569
     .long   0xFFFFFFFF
     .long   0xFFFFFFFF
     .long   0xFFFFFFFF
@@ -123,9 +50,6 @@
     .thumb_func
     .global _startup
 _startup:
-
-    /* Suggested register initialisation from "Definitive guide to Cortex-M3 guide" */
-    
     mov     r0,#0
     mov     r1,#0
     mov     r2,#0
@@ -140,23 +64,21 @@ _startup:
     mov     r11,#0
     mov     r12,#0
 
-    CPSID i
+    CPSID i // Disable interrupts
 
-unlock_watchdog:
-
-    ldr r6, = 0x4005200e @ WDOG_UNLOCK doc: K20P64M50SF0RM.pdf ( Page: 423 )
+    // Unlock watchdog - page 478
+    ldr r6, = 0x4005200e // page 473
     ldr r0, = 0xc520
     strh r0, [r6]
     ldr r0, = 0xd928
     strh r0, [r6]
 
-disable_watchdog:
-
-    ldr r6, = 0x40052000 @ WDOG_STCTRLH doc: K20P64M50SF0RM.pdf ( Page: 418 )
+    // Disable watchdog - page 468
+    ldr r6, = 0x40052000 // page 473
     ldr r0, = 0x01d2
     strh r0, [r6]
 
-    CPSIE i
+    CPSIE i // Enable interrupts
 
 led_setup:
 
@@ -199,7 +121,7 @@ led_on:
     str r0, [r6]
     mov pc, r14
 
-delay:
+delay: @ Uncalibrated busy wait
 
     ldr r1, = 0x2625A0
 delay_loop:

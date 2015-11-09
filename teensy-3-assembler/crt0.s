@@ -1,32 +1,127 @@
-    
     .syntax unified
-    .thumb    
+
     .section ".vectors"
-    .global _start
-    .global _vectors
-
-_vectors:    
-_start:
-
-    /* Initial Stack Pointer and Reset Vector */
-
-    .long 0x20000000             
-    .long _startup
+    .long _estack //  0 ARM: Initial Stack Pointer
+    .long _startup //  1 ARM: Initial Program Counter
+    //  2 ARM: Non-maskable Interrupt (NMI)
+    //  3 ARM: Hard Fault
+    //  4 ARM: MemManage Fault
+    //  5 ARM: Bus Fault
+    //  6 ARM: Usage Fault
+    //  7 --
+    //  8 --
+    //  9 --
+    // 10 --
+    // 11 ARM: Supervisor call (SVCall)
+    // 12 ARM: Debug Monitor
+    // 13 --
+    // 14 ARM: Pendable req serv(PendableSrvReq)
+    // 15 ARM: System tick timer (SysTick)
+    // 16 DMA channel 0 transfer complete
+    // 17 DMA channel 1 transfer complete
+    // 18 DMA channel 2 transfer complete
+    // 19 DMA channel 3 transfer complete
+    // 20 DMA channel 4 transfer complete
+    // 21 DMA channel 5 transfer complete
+    // 22 DMA channel 6 transfer complete
+    // 23 DMA channel 7 transfer complete
+    // 24 DMA channel 8 transfer complete
+    // 25 DMA channel 9 transfer complete
+    // 26 DMA channel 10 transfer complete
+    // 27 DMA channel 11 transfer complete
+    // 28 DMA channel 12 transfer complete
+    // 29 DMA channel 13 transfer complete
+    // 30 DMA channel 14 transfer complete
+    // 31 DMA channel 15 transfer complete
+    // 32 DMA error interrupt channel
+    // 33 --
+    // 34 Flash Memory Command complete
+    // 35 Flash Read collision
+    // 36 Low-voltage detect/warning
+    // 37 Low Leakage Wakeup
+    // 38 Both EWM and WDOG interrupt
+    // 39 --
+    // 40 I2C0
+    // 41 I2C1
+    // 42 SPI0
+    // 43 SPI1
+    // 44 --
+    // 45 CAN OR'ed Message buffer (0-15)
+    // 46 CAN Bus Off
+    // 47 CAN Error
+    // 48 CAN Transmit Warning
+    // 49 CAN Receive Warning
+    // 50 CAN Wake Up
+    // 51 I2S0 Transmit
+    // 52 I2S0 Receive
+    // 53 --
+    // 54 --
+    // 55 --
+    // 56 --
+    // 57 --
+    // 58 --
+    // 59 --
+    // 60 UART0 CEA709.1-B (LON) status
+    // 61 UART0 status
+    // 62 UART0 error
+    // 63 UART1 status
+    // 64 UART1 error
+    // 65 UART2 status
+    // 66 UART2 error
+    // 67 --
+    // 68 --
+    // 69 --
+    // 70 --
+    // 71 --
+    // 72 --
+    // 73 ADC0
+    // 74 ADC1
+    // 75 CMP0
+    // 76 CMP1
+    // 77 CMP2
+    // 78 FTM0
+    // 79 FTM1
+    // 80 FTM2
+    // 81 CMT
+    // 82 RTC Alarm interrupt
+    // 83 RTC Seconds interrupt
+    // 84 PIT Channel 0
+    // 85 PIT Channel 1
+    // 86 PIT Channel 2
+    // 87 PIT Channel 3
+    // 88 PDB Programmable Delay Block
+    // 89 USB OTG
+    // 90 USB Charger Detect
+    // 91 --
+    // 92 --
+    // 93 --
+    // 94 --
+    // 95 --
+    // 96 --
+    // 97 DAC0
+    // 98 --
+    // 99 TSI0
+    // 100 MCG
+    // 101 Low Power Timer
+    // 102 --
+    // 103 Pin detect (Port A)
+    // 104 Pin detect (Port B)
+    // 105 Pin detect (Port C)
+    // 106 Pin detect (Port D)
+    // 107 Pin detect (Port E)
+    // 108 --
+    // 109 --
+    // 110 Software interrupt
   
-    .org 0x400
-
-    /* Flash Configuration */
-
+    .section ".flashconfig"
     .long   0xFFFFFFFF
     .long   0xFFFFFFFF
     .long   0xFFFFFFFF
     .long   0xFFFFFFFE
 
-    .thumb
     .section ".startup","x",%progbits
     .thumb_func
     .global _startup
-
 _startup:
 
     /* Suggested register initialisation from "Definitive guide to Cortex-M3 guide" */
@@ -112,5 +207,8 @@ delay_loop:
     cmp r1, #0
     bne delay_loop
     mov pc, r14
+
+.global _halt
+_halt: b _halt
 
     .end

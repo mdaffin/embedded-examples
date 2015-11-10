@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 
 /*
-Example assembler code to make the led on the teensy 3.1/3.2 blink.
+Blink demo in assembler for the teensy 3.1.
 
 This text refers to the programmers manual for the MK20DX256VLH7. You can
 obtain it from: https://www.pjrc.com/teensy/K20P64M72SF1RM.pdf
@@ -31,13 +31,13 @@ obtain it from: https://www.pjrc.com/teensy/K20P64M72SF1RM.pdf
 
     .section ".vectors"
     // Interrupt vector definitions - page 63
-    .long _estack //  0 ARM: Initial Stack Pointer
+    .long _estack  //  0 ARM: Initial Stack Pointer
     .long _startup //  1 ARM: Initial Program Counter
-    //  2 ARM: Non-maskable Interrupt (NMI)
-    //  3 ARM: Hard Fault
-    //  4 ARM: MemManage Fault
-    //  5 ARM: Bus Fault
-    //  6 ARM: Usage Fault
+    .long _halt    //  2 ARM: Non-maskable Interrupt (NMI)
+    .long _halt    //  3 ARM: Hard Fault
+    .long _halt    //  4 ARM: MemManage Fault
+    .long _halt    //  5 ARM: Bus Fault
+    .long _halt    //  6 ARM: Usage Fault
   
     .section ".flashconfig"
     // Flash Configuration located at 0x400 - page 569
@@ -46,10 +46,12 @@ obtain it from: https://www.pjrc.com/teensy/K20P64M72SF1RM.pdf
     .long   0xFFFFFFFF
     .long   0xFFFFFFFE
 
+    // Start of program execution
     .section ".startup","x",%progbits
     .thumb_func
     .global _startup
 _startup:
+    // Zero all the registers
     mov     r0,#0
     mov     r1,#0
     mov     r2,#0
@@ -64,42 +66,38 @@ _startup:
     mov     r11,#0
     mov     r12,#0
 
-    CPSID i // Disable interrupts
+    cpsid i // Disable interrupts
 
     // Unlock watchdog - page 478
-    ldr r6, = 0x4005200e // page 473
-    ldr r0, = 0xc520
+    ldr r6, = 0x4005200E // address from page 473
+    ldr r0, = 0xC520
     strh r0, [r6]
-    ldr r0, = 0xd928
+    ldr r0, = 0xD928
     strh r0, [r6]
 
     // Disable watchdog - page 468
-    ldr r6, = 0x40052000 // page 473
-    ldr r0, = 0x01d2
+    ldr r6, = 0x40052000 // address from page 473
+    ldr r0, = 0x01D2
     strh r0, [r6]
 
-    CPSIE i // Enable interrupts
+    cpsie i // Enable interrupts
 
-led_setup:
-
-    ldr r6, = 0x40048038 @ SIM_SCGC5  doc: K20P64M50SF0RM.pdf ( Page 239 )
-    ldr r0, = 0x00043F82 @ Clocks active to all GPIO
+    // Enable system clock on all GPIO ports - page 254
+    ldr r6, = 0x40048038 
+    ldr r0, = 0x00043F82 // 0b1000011111110000010
     str r0, [r6]
 
-    .set GPIO_ENABLE, (0x001 << 8)
-    .set PULL_UP_ENABLE, (1 << 1)
-    .set PULL_UP_SELECT, (1 << 0)
-    .set DRIVE_STR, (1 << 6)
-    .set PORT_CTRL_FLAGS, ( DRIVE_STR | GPIO_ENABLE | PULL_UP_ENABLE | PULL_UP_SELECT) @ doc: K20P64M50SF0RM.pdf ( Page 213 )
-
-    ldr r6, = 0x4004B014 @ PORTC_PCR5 doc: K20P64M50SF0RM.pdf ( Pages 210, 213 )
-    ldr r0, = PORT_CTRL_FLAGS
+    // Configure the led pin
+    ldr r6, = 0x4004B014 // PORTC_PCR5 - page 223/227
+    ldr r0, = 0x00000143 // Enables GPIO | DSE | PULL_ENABLE | PULL_SELECT - page 227
     str r0, [r6]
 
-    ldr r6, = 0x400FF094 @ GPIOC_PDDR doc: K20P64M50SF0RM.pdf ( Pages: 1181, 1185 )
-    ldr r0, = 0xFFFFFFFF @ All as output
+    // Set the led pin to output
+    ldr r6, = 0x400FF094 // GPIOC_PDDR - page 1334,1337
+    ldr r0, = 0x20 // pin 5 on port c
     str r0, [r6]
 
+    // Main loop
 loop:
     bl led_on
     bl delay
@@ -107,22 +105,28 @@ loop:
     bl delay
     b loop
 
+    // Function to turn the led off
+    .thumb_func
+    .global led_off
 led_off:
-
-    ldr r6, = 0x400FF080 @ GPIOC_PDOR doc: K20P64M50SF0RM.pdf ( Pages: 1180, 1182 )
-    ldr r0, = 0x00000000 @ All as low
+    ldr r6, = 0x400FF080 // GPIOC_PDOR - page 1334,1335
+    ldr r0, = 0x0
     str r0, [r6]
     mov pc, r14
 
+    // Function to turn the led on
+    .thumb_func
+    .global led_on
 led_on:
-
-    ldr r6, = 0x400FF080 @ GPIOC_PDOR doc: K20P64M50SF0RM.pdf ( Pages: 1180, 1182 )
-    ldr r0, = 0xFFFFFFFF @ All as high
+    ldr r6, = 0x400FF080 // GPIOC_PDOR - page 1334,1335
+    ldr r0, = 0x20
     str r0, [r6]
     mov pc, r14
 
-delay: @ Uncalibrated busy wait
-
+    // Uncalibrated busy wait
+    .thumb_func
+    .global delay
+delay:
     ldr r1, = 0x2625A0
 delay_loop:
     sub r1, r1, #1
@@ -130,7 +134,5 @@ delay_loop:
     bne delay_loop
     mov pc, r14
 
-.global _halt
 _halt: b _halt
-
     .end

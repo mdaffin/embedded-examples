@@ -13,7 +13,7 @@ Packge `arm-none-eabi-gcc` on archlinux or `gcc-arm-none-eabi` on ubuntu. Otherw
 You will also need the teensy-loader or teensy-loader-cli which you can get [here](https://www.pjrc.com/teensy/loader.html)
 
 ## Linker script - layout.ld
-The linker script tells the linker where to place the various bits of code. For more details see (this tutorial)[http://bravegnu.org/gnu-eprog/linker.html]
+The linker script tells the linker where to place the various bits of code. For more details see [this tutorial](http://bravegnu.org/gnu-eprog/linker.html)
 
 ## Assembler code - crt0.s
 A minimal example of the assembler needed to drive the led on a teensy 3.1. It only initlises parts of the arm chip that are needed to blink the led in order to make it easier to understand. For a more complete example see the the example by [karl lunt](http://www.seanet.com/~karllunt/bareteensy31.html).
@@ -31,6 +31,6 @@ teensy-loader-cli -w --mcu=mk20dx256 crt0.hex
 ```
 
 ## References
-1) [Turn the LED on with assembler code ( Teensy 3.1 )][https://forum.pjrc.com/threads/25762-Turn-the-LED-on-with-assembler-code-(-Teensy-3-1-)?p=47739&viewfull=1#post47739]
+1) [Turn the LED on with assembler code ( Teensy 3.1 )](https://forum.pjrc.com/threads/25762-Turn-the-LED-on-with-assembler-code-\(-Teensy-3-1-\)?p=47739&viewfull=1#post47739)
 1) [Embedded Programming with the GNU Toolchain](http://bravegnu.org/gnu-eprog/)
 2) [Bare-metal Teensy 3.x Development](http://www.seanet.com/~karllunt/bareteensy31.html)

@@ -31,6 +31,6 @@ teensy-loader-cli -w --mcu=mk20dx256 crt0.hex
 ```
 
 ## References
-1) [Turn the LED on with assembler code ( Teensy 3.1 )](https://forum.pjrc.com/threads/25762-Turn-the-LED-on-with-assembler-code-\(-Teensy-3-1-\)?p=47739&viewfull=1#post47739)
-1) [Embedded Programming with the GNU Toolchain](http://bravegnu.org/gnu-eprog/)
-2) [Bare-metal Teensy 3.x Development](http://www.seanet.com/~karllunt/bareteensy31.html)
+1. [Turn the LED on with assembler code ( Teensy 3.1 )](https://forum.pjrc.com/threads/25762-Turn-the-LED-on-with-assembler-code-\(-Teensy-3-1-\)?p=47739&viewfull=1#post47739)
+1. [Embedded Programming with the GNU Toolchain](http://bravegnu.org/gnu-eprog/)
+2. [Bare-metal Teensy 3.x Development](http://www.seanet.com/~karllunt/bareteensy31.html)

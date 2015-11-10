@@ -8,7 +8,7 @@ You will need the assembler, linker and objcopy from the arm-none-eabi toolkit:
 * arm-none-eabi-ld
 * arm-none-eabi-objcopy
 
-Packge `arm-none-eabi-gcc` on archlinux or `gcc-arm-none-eabi` on ubuntu. Otherwise you can get it from [CodeSourcery](https://sourcery.mentor.com/GNUToolchain/release1802?) or from your arduino install at `$ARDUINO_SDK/hardware/tools/arm/bin`.
+You can get them from packge `arm-none-eabi-gcc` on archlinux or `gcc-arm-none-eabi` on ubuntu. Otherwise you can get it from [CodeSourcery](https://sourcery.mentor.com/GNUToolchain/release1802?) or from your arduino install at `$ARDUINO_SDK/hardware/tools/arm/bin`.
 
 You will also need the teensy-loader or teensy-loader-cli which you can get [here](https://www.pjrc.com/teensy/loader.html)
 

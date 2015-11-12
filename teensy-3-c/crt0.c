@@ -21,24 +21,45 @@ THE SOFTWARE.
 */
 
 /*
-Blink demo in assembler for the teensy 3.1.
+Blink demo in c for the teensy 3.1.
 
 This text refers to the programmers manual for the MK20DX256VLH7. You can
 obtain it from: https://www.pjrc.com/teensy/K20P64M72SF1RM.pdf
 */
 
+extern unsigned int _estack;
+
+void startup();
+void nim_handler();
+void hard_fault_handler();
+void mem_fault_handler();
+void bus_fault_handler();
+void usage_fault_handler();
+
+__attribute__ ((section(".vectors")))
+unsigned int * _vectors[7] = {
+    (unsigned int *) &_estack,             //  0 ARM: Initial Stack Pointer
+    (unsigned int *) startup,                //  1 ARM: Initial Program Counter
+    (unsigned int *) nim_handler,         //  2 ARM: Non-maskable Interrupt (NMI)
+    (unsigned int *) hard_fault_handler,  //  3 ARM: Hard Fault
+    (unsigned int *) mem_fault_handler,   //  4 ARM: MemManage Fault
+    (unsigned int *) bus_fault_handler,   //  5 ARM: Bus Fault
+    (unsigned int *) usage_fault_handler  //  6 ARM: Usage Fault
+};
+
+void startup() { while (1); }
+void nim_handler() { while (1); }
+void hard_fault_handler() { while (1); }
+void mem_fault_handler() { while (1); }
+void bus_fault_handler() { while (1); }
+void usage_fault_handler() { while (1); }
+
+/*
     .syntax unified
 
     .section ".vectors"
     // Interrupt vector definitions - page 63
-    .long _estack  //  0 ARM: Initial Stack Pointer
-    .long _startup //  1 ARM: Initial Program Counter
-    .long _halt    //  2 ARM: Non-maskable Interrupt (NMI)
-    .long _halt    //  3 ARM: Hard Fault
-    .long _halt    //  4 ARM: MemManage Fault
-    .long _halt    //  5 ARM: Bus Fault
-    .long _halt    //  6 ARM: Usage Fault
-  
+
     .section ".flashconfig"
     // Flash Configuration located at 0x400 - page 569
     .long   0xFFFFFFFF
@@ -85,7 +106,7 @@ _startup:
     cpsie i // Enable interrupts
 
     // Enable system clock on all GPIO ports - page 254
-    ldr r6, = 0x40048038 
+    ldr r6, = 0x40048038
     ldr r0, = 0x00043F82 // 0b1000011111110000010
     str r0, [r6]
 
@@ -138,3 +159,4 @@ delay_loop:
 
 _halt: b _halt
     .end
+    */

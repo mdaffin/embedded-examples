@@ -23,9 +23,7 @@ A minimal example of the assembler needed to drive the led on a teensy 3.1. It o
 To compile and upload to the teensy run:
 
 ```bash
-arm-none-eabi-gcc -mcpu=cortex-m4 -nostdlib -mthumb -o crt0.o crt0.c
-
-arm-none-eabi-as -g -mcpu=cortex-m4 -mthumb -o crt0.o crt0.s
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -c -o crt0.o crt0.c
 arm-none-eabi-ld -T layout.ld -o crt0.elf crt0.o
 arm-none-eabi-objcopy -O ihex -R .eeprom crt0.elf crt0.hex
 echo "Reset teensy now"

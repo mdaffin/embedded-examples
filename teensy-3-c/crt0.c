@@ -27,6 +27,8 @@ This text refers to the programmers manual for the MK20DX256VLH7. You can
 obtain it from: https://www.pjrc.com/teensy/K20P64M72SF1RM.pdf
 */
 
+#include <stdint.h>
+
 extern unsigned int _estack;
 
 void startup();
@@ -36,18 +38,26 @@ void mem_fault_handler();
 void bus_fault_handler();
 void usage_fault_handler();
 
-__attribute__ ((section(".vectors")))
-unsigned int * _vectors[7] = {
-    (unsigned int *) &_estack,             //  0 ARM: Initial Stack Pointer
-    (unsigned int *) startup,                //  1 ARM: Initial Program Counter
-    (unsigned int *) nim_handler,         //  2 ARM: Non-maskable Interrupt (NMI)
-    (unsigned int *) hard_fault_handler,  //  3 ARM: Hard Fault
-    (unsigned int *) mem_fault_handler,   //  4 ARM: MemManage Fault
-    (unsigned int *) bus_fault_handler,   //  5 ARM: Bus Fault
-    (unsigned int *) usage_fault_handler  //  6 ARM: Usage Fault
+__attribute__ ((section(".vectors"), used))
+void (* const _vectors[7])(void) = {
+    (void (*)(void))((unsigned long)&_estack),
+    startup,
+    nim_handler,
+    hard_fault_handler,
+    mem_fault_handler,
+    bus_fault_handler,
+    usage_fault_handler
 };
 
-void startup() { while (1); }
+__attribute__ ((section(".flashconfig"), used))
+const uint8_t flashconfigbytes[16] = {
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE
+};
+
+void startup() {
+  while (1);
+}
 void nim_handler() { while (1); }
 void hard_fault_handler() { while (1); }
 void mem_fault_handler() { while (1); }

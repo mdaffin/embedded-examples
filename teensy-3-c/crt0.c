@@ -27,7 +27,9 @@ This text refers to the programmers manual for the MK20DX256VLH7. You can
 obtain it from: https://www.pjrc.com/teensy/K20P64M72SF1RM.pdf
 */
 
-#include <stdint.h>
+#define WDOG_UNLOCK         (*(volatile unsigned short *)0x4005200E) // Watchdog Unlock register
+#define WDOG_UNLOCK_SEQ1            ((unsigned short)0xC520)
+#define WDOG_UNLOCK_SEQ2            ((unsigned short)0x01D2)//((uint16_t)0xD928)
 
 extern unsigned int _estack;
 
@@ -50,12 +52,19 @@ void (* const _vectors[7])(void) = {
 };
 
 __attribute__ ((section(".flashconfig"), used))
-const uint8_t flashconfigbytes[16] = {
+const unsigned char flashconfigbytes[16] = {
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFF
+
 };
 
 void startup() {
+  WDOG_UNLOCK = WDOG_UNLOCK_SEQ1;
+  WDOG_UNLOCK = WDOG_UNLOCK_SEQ2;
+  __asm__ volatile ("nop");
+  __asm__ volatile ("nop");
+
+
   while (1);
 }
 void nim_handler() { while (1); }

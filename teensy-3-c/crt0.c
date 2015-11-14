@@ -27,11 +27,12 @@ This text refers to the programmers manual for the MK20DX256VLH7. You can
 obtain it from: https://www.pjrc.com/teensy/K20P64M72SF1RM.pdf
 */
 
-#define WDOG_UNLOCK        (*(volatile unsigned short *)0x4005200E) // Watchdog Unlock register
-#define GPIO_CONFIG        (*(volatile unsigned short *)0x40048038)
-#define PORTC_PCR5         (*(volatile unsigned short *)0x4004B014) // PORTC_PCR5 - page 223/227
-#define GPIOC_PDDR         (*(volatile unsigned short *)0x400FF094) // GPIOC_PDDR - page 1334,1337
-#define GPIOC_PDOR         (*(volatile unsigned short *)0x400FF080) // GPIOC_PDOR - page 1334,1335
+#define WDOG_UNLOCK  (*(volatile unsigned short *)0x4005200E) // Watchdog Unlock register
+#define WDOG_STCTRLH (*(volatile unsigned short *)0x40052000) // Watchdog Status and Control Register High
+#define GPIO_CONFIG  (*(volatile unsigned short *)0x40048038)
+#define PORTC_PCR5   (*(volatile unsigned short *)0x4004B014) // PORTC_PCR5 - page 223/227
+#define GPIOC_PDDR   (*(volatile unsigned short *)0x400FF094) // GPIOC_PDDR - page 1334,1337
+#define GPIOC_PDOR   (*(volatile unsigned short *)0x400FF080) // GPIOC_PDOR - page 1334,1335
 
 extern unsigned int _estack;
 
@@ -65,8 +66,9 @@ const unsigned char flashconfigbytes[16] = {
 };
 
 void startup() {
-  WDOG_UNLOCK = ((unsigned short)0xC520);
-  WDOG_UNLOCK = ((unsigned short)0x01D2);
+  WDOG_UNLOCK  = ((unsigned short)0xC520);
+  WDOG_UNLOCK  = ((unsigned short)0xD928);
+  WDOG_STCTRLH = ((unsigned short)0x01D2);
   __asm__ volatile ("nop");
   __asm__ volatile ("nop");
 

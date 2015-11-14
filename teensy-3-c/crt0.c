@@ -27,8 +27,6 @@ This text refers to the programmers manual for the MK20DX256VLH7. You can
 obtain it from: https://www.pjrc.com/teensy/K20P64M72SF1RM.pdf
 */
 
-#include <stdlib.h>
-
 #define WDOG_UNLOCK  (*(volatile unsigned short *)0x4005200E) // Watchdog Unlock register
 #define WDOG_STCTRLH (*(volatile unsigned short *)0x40052000) // Watchdog Status and Control Register High
 #define GPIO_CONFIG  (*(volatile unsigned short *)0x40048038)

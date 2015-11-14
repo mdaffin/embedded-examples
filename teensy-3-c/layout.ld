@@ -41,7 +41,7 @@ SECTIONS {
         *(.text*)
         *(.rodata*)
         . = ALIGN(4);
-        _sfdata = .;
+        _etext = .;
     } > FLASH
 
     .data : {
@@ -60,7 +60,6 @@ SECTIONS {
         *(COMMON)
         . = ALIGN(4);
         _ebss = .;
-        __bss_end = .;
     } > RAM
 
     _estack = ORIGIN(RAM) + LENGTH(RAM); /* stack pointer start */

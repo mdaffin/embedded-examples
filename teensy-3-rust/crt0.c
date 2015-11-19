@@ -92,25 +92,6 @@ void startup() {
   rust_loop();
 }
 
-//int n = 1000; // Used to test if the data section is copied correctly
-//void loop() {
-//  while (1) {
-//    led_on();
-//    delay(n);
-//    led_off();
-//    delay(n);
-//  }
-//}
-
-void led_on() {
-led_on:
-  GPIOC_PDOR = ((unsigned short)0x20);
-}
-
-void led_off() {
-  GPIOC_PDOR = ((unsigned short)0x0);
-}
-
 void delay(int ms) {
   for (unsigned int i = 0; i <= ms * 2500; i++) {;}
 }

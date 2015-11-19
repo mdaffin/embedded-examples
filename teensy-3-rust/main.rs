@@ -18,21 +18,30 @@ pub unsafe fn __aeabi_unwind_cpp_pr0() -> ()
     loop {}
 }
 
+#[no_mangle]
+pub unsafe fn __aeabi_unwind_cpp_pr1() -> ()
+{
+    loop {}
+}
+
 extern {
-    fn led_on();
-    fn led_off();
     fn delay(ms: i32);
 }
 
+//pub const GPIOC_PDOR: u32 = 0x400FF080 // GPIOC_PDOR - page 1334,1335
+//macro_rules! GPIOC_PDOR: {() => (0x400FF080 as u16);} // GPIOC_PDOR - page 1334,1335
+
 pub fn led_on_w() {
+    let mut GPIOC_PDOR = 0x400FF080 as *mut u32; // GPIOC_PDOR - page 1334,1335
     unsafe {
-        led_on();
+        *GPIOC_PDOR = 0x20;
     }
 }
 
 pub fn led_off_w() {
+    let mut GPIOC_PDOR = 0x400FF080 as *mut u32; // GPIOC_PDOR - page 1334,1335
     unsafe {
-        led_off();
+        *GPIOC_PDOR = 0x0;
     }
 }
 

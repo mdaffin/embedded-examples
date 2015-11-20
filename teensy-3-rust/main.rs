@@ -1,9 +1,7 @@
 #![feature(lang_items,no_std,core_intrinsics,asm)]
 #![no_std]
-//#![allow(dead_code)]
 #![crate_type="staticlib"]
 
-//extern crate core;
 use core::intrinsics::{volatile_store};
 
 #[lang="stack_exhausted"] extern fn stack_exhausted() {}
@@ -26,10 +24,6 @@ pub unsafe fn __aeabi_unwind_cpp_pr1() -> ()
     loop {}
 }
 
-extern {
-    fn delay(ms: i32);
-}
-
 macro_rules! GPIOC_PDOR   {() => (0x400FF080 as *mut u32);} // GPIOC_PDOR - page 1334,1335
 macro_rules! WDOG_UNLOCK  {() => (0x4005200E as *mut u16);} // Watchdog Unlock register
 macro_rules! WDOG_STCTRLH {() => (0x40052000 as *mut u16);} // Watchdog Status and Control Register High
@@ -47,19 +41,11 @@ extern {
     fn _estack();
 }
 
-//#[start]
-//fn start(_: isize, _: *const *const u8) -> isize {
-//    startup();
-//    0
-//}
-#[allow(non_upper_case_globals)]
-const ISRCount: usize = 16;
-
 #[link_section=".vectors"]
 #[allow(non_upper_case_globals)]
 #[no_mangle]
-pub static ISRVectors: [Option<unsafe extern fn()>; ISRCount] = [
-  Some(_estack as unsafe extern "C" fn()),
+pub static ISRVectors: [Option<unsafe extern fn()>; 16] = [
+  Some(_estack),
   Some(startup),             // Reset
   Some(isr_nmi),          // NMI
   Some(isr_hardfault),    // Hard Fault
@@ -90,34 +76,34 @@ pub static flashconfigbytes: [usize; 4] = [
 #[link_section=".startup"]
 #[allow(dead_code)]
 #[no_mangle]
-pub unsafe extern "C" fn startup() {
-    unsafe {
-        let mut src: *mut u32 = &mut _etext;
-        let mut dest: *mut u32 = &mut _sdata;
+pub unsafe extern fn startup() {
+    let mut src: *mut u32 = &mut _etext;
+    let mut dest: *mut u32 = &mut _sdata;
 
-        volatile_store(WDOG_UNLOCK!(), 0xC520);
-        volatile_store(WDOG_UNLOCK!(), 0xD928);
-        volatile_store(WDOG_STCTRLH!(), 0x01D2);
+    volatile_store(WDOG_UNLOCK!(), 0xC520);
+    volatile_store(WDOG_UNLOCK!(), 0xD928);
+    volatile_store(WDOG_STCTRLH!(), 0x01D2);
 
-        while dest < &mut _edata as *mut u32 {
-            *dest = *src;
-            dest = ((dest as u32) + 4) as *mut u32;
-            src = ((src as u32) + 4) as *mut u32;
-        }
-      
-        dest = &mut _sbss as *mut u32;
-
-        while dest < &mut _edata as *mut u32 {
-            *dest = 0;
-            dest = ((dest as u32) + 4) as *mut u32;
-        }
-        // Enable system clock on all GPIO ports - page 254
-        *GPIO_CONFIG!() = 0x00043F82; // 0b1000011111110000010
-        // Configure the led pin
-        *PORTC_PCR5!() = 0x00000143; // Enables GPIO | DSE | PULL_ENABLE | PULL_SELECT - page 227
-        // Set the led pin to output
-        *GPIOC_PDDR!() = 0x20; // pin 5 on port c
+    while dest < &mut _edata as *mut u32 {
+        *dest = *src;
+        dest = ((dest as u32) + 4) as *mut u32;
+        src = ((src as u32) + 4) as *mut u32;
     }
+  
+    dest = &mut _sbss as *mut u32;
+
+    while dest < &mut _edata as *mut u32 {
+        *dest = 0;
+        dest = ((dest as u32) + 4) as *mut u32;
+    }
+
+    // Enable system clock on all GPIO ports - page 254
+    *GPIO_CONFIG!() = 0x00043F82; // 0b1000011111110000010
+    // Configure the led pin
+    *PORTC_PCR5!() = 0x00000143; // Enables GPIO | DSE | PULL_ENABLE | PULL_SELECT - page 227
+    // Set the led pin to output
+    *GPIOC_PDDR!() = 0x20; // pin 5 on port c
+
     rust_loop();
 }
 
@@ -151,13 +137,13 @@ pub fn rust_loop() {
     }
 }
 
-pub unsafe extern "C" fn isr_nmi() { loop {} }
-pub unsafe extern "C" fn isr_hardfault() { loop {} }
-pub unsafe extern "C" fn isr_mmfault() { loop {} }
-pub unsafe extern "C" fn isr_busfault() { loop {} }
-pub unsafe extern "C" fn isr_usagefault() { loop {} }
-pub unsafe extern "C" fn isr_reserved_1() { loop {} }
-pub unsafe extern "C" fn isr_svcall() { loop {} }
-pub unsafe extern "C" fn isr_debugmon() { loop {} }
-pub unsafe extern "C" fn isr_pendsv() { loop {} }
-pub unsafe extern "C" fn isr_systick() { loop {} }
+pub unsafe extern fn isr_nmi() { loop {} }
+pub unsafe extern fn isr_hardfault() { loop {} }
+pub unsafe extern fn isr_mmfault() { loop {} }
+pub unsafe extern fn isr_busfault() { loop {} }
+pub unsafe extern fn isr_usagefault() { loop {} }
+pub unsafe extern fn isr_reserved_1() { loop {} }
+pub unsafe extern fn isr_svcall() { loop {} }
+pub unsafe extern fn isr_debugmon() { loop {} }
+pub unsafe extern fn isr_pendsv() { loop {} }
+pub unsafe extern fn isr_systick() { loop {} }

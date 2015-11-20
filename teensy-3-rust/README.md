@@ -22,7 +22,17 @@ A minimal example of the C code needed to drive the led on a teensy 3.1. It only
 
 ## Compile and upload
 
-To compile and upload to the teensy run:
+To compile and upload to the teensy run this once:
+
+```bash
+git clone https://github.com/rust-lang/rust
+cd rust
+git checkout $(rustc --version -v | awk '/commit-hash/ { print $2 }')
+cd ..
+mkdir libcore-thumbv7em
+rustc -C opt-level=2 -Z no-landing-pads --target thumbv7em-none-eabi -g rust/src/libcore/lib.rs --out-dir libcore-thumbv7em
+```
+And this to compile:
 
 ```bash
 arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -nostdlib -c -o crt0.o crt0.c

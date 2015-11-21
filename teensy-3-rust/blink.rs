@@ -45,8 +45,8 @@ extern {
 #[allow(non_upper_case_globals)]
 #[no_mangle]
 pub static ISRVectors: [Option<unsafe extern fn()>; 16] = [
-  Some(_estack),
-  Some(startup),             // Reset
+  Some(_estack),          // Stack pointer
+  Some(startup),          // Reset
   Some(isr_nmi),          // NMI
   Some(isr_hardfault),    // Hard Fault
   Some(isr_mmfault),      // CM3 Memory Management Fault
@@ -89,7 +89,7 @@ pub unsafe extern fn startup() {
         dest = ((dest as u32) + 4) as *mut u32;
         src = ((src as u32) + 4) as *mut u32;
     }
-  
+
     dest = &mut _sbss as *mut u32;
 
     while dest < &mut _edata as *mut u32 {
@@ -107,19 +107,19 @@ pub unsafe extern fn startup() {
     rust_loop();
 }
 
-pub fn led_on_w() {
+pub fn led_on() {
     unsafe {
         volatile_store(GPIOC_PDOR!(), 0x20);
     }
 }
 
-pub fn led_off_w() {
+pub fn led_off() {
     unsafe {
         volatile_store(GPIOC_PDOR!(), 0x0);
     }
 }
 
-pub fn delay_w(ms: i32) {
+pub fn delay(ms: i32) {
     for _ in 0..ms*5000 {
         unsafe {
             asm!("NOP");
@@ -127,13 +127,12 @@ pub fn delay_w(ms: i32) {
     }
 }
 
-#[no_mangle]
 pub fn rust_loop() {
     loop {
-        led_on_w();
-        delay_w(1000);
-        led_off_w();
-        delay_w(1000);
+        led_on();
+        delay(1000);
+        led_off();
+        delay(1000);
     }
 }
 

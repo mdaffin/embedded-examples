@@ -1,0 +1,6 @@
+*.swp
+*.elf
+*.hex
+*.o
+libcore-thumbv7em/
+rust/

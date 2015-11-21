@@ -16,7 +16,7 @@ You will also need the teensy-loader or teensy-loader-cli which you can get [her
 
 The linker script tells the linker where to place the various bits of code. For more details see [this tutorial](http://bravegnu.org/gnu-eprog/linker.html)
 
-## C code: `crt0.c`
+## C code: `blink.c`
 
 A minimal example of the C code needed to drive the led on a teensy 3.1. It only initlises parts of the arm chip that are needed to blink the led in order to make it easier to understand. For a more complete example see the the example by [karl lunt](http://www.seanet.com/~karllunt/bareteensy31.html).
 
@@ -35,11 +35,11 @@ rustc -C opt-level=2 -Z no-landing-pads --target thumbv7em-none-eabi -g rust/src
 And this to compile:
 
 ```bash
-rustc -C opt-level=2 -Z no-landing-pads --target thumbv7em-none-eabi -g --emit obj -L libcore-thumbv7em -o main.o main.rs
-arm-none-eabi-ld -T layout.ld -o crt0.elf main.o
-arm-none-eabi-objcopy -O ihex -R .eeprom crt0.elf crt0.hex
+rustc -C opt-level=2 -Z no-landing-pads --target thumbv7em-none-eabi -g --emit obj -L libcore-thumbv7em -o blink.o blink.rs
+arm-none-eabi-ld -T layout.ld -o blink.elf blink.o
+arm-none-eabi-objcopy -O ihex -R .eeprom blink.elf blink.hex
 echo "Reset teensy now"
-teensy-loader-cli -w --mcu=mk20dx256 crt0.hex
+teensy-loader-cli -w --mcu=mk20dx256 blink.hex
 
 ```
 

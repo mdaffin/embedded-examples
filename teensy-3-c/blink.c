@@ -34,7 +34,7 @@ obtain it from: https://www.pjrc.com/teensy/K20P64M72SF1RM.pdf
 #define GPIOC_PDDR   (*(volatile unsigned short *)0x400FF094) // GPIOC_PDDR - page 1334,1337
 #define GPIOC_PDOR   (*(volatile unsigned short *)0x400FF080) // GPIOC_PDOR - page 1334,1335
 
-extern unsigned long _etext;
+extern unsigned long _sflashdata;
 extern unsigned long _sdata;
 extern unsigned long _edata;
 extern unsigned long _sbss;
@@ -71,7 +71,7 @@ const unsigned char flashconfigbytes[16] = {
 
 __attribute__ ((section(".startup")))
 void startup() {
-	unsigned long *src = &_etext;
+	unsigned long *src = &_sflashdata;
 	unsigned long *dest = &_sdata;
 
   WDOG_UNLOCK  = ((unsigned short)0xC520);

@@ -15,7 +15,7 @@ You will also need the teensy-loader or teensy-loader-cli which you can get [her
 ## Linker script - layout.ld
 The linker script tells the linker where to place the various bits of code. For more details see [this tutorial](http://bravegnu.org/gnu-eprog/linker.html)
 
-## Assembler code - crt0.s
+## Assembler code - blink.s
 A minimal example of the assembler needed to drive the led on a teensy 3.1. It only initlises parts of the arm chip that are needed to blink the led in order to make it easier to understand. For a more complete example see the the example by [karl lunt](http://www.seanet.com/~karllunt/bareteensy31.html).
 
 ## Compile and upload
@@ -23,11 +23,11 @@ A minimal example of the assembler needed to drive the led on a teensy 3.1. It o
 To compile and upload to the teensy run:
 
 ```bash
-arm-none-eabi-as -g -mcpu=cortex-m4 -mthumb -o crt0.o crt0.s
-arm-none-eabi-ld -T layout.ld -o crt0.elf crt0.o
-arm-none-eabi-objcopy -O ihex -R .eeprom crt0.elf crt0.hex
+arm-none-eabi-as -g -mcpu=cortex-m4 -mthumb -o blink.o blink.s
+arm-none-eabi-ld -T layout.ld -o blink.elf blink.o
+arm-none-eabi-objcopy -O ihex -R .eeprom blink.elf blink.hex
 echo "Reset teensy now"
-teensy-loader-cli -w --mcu=mk20dx256 crt0.hex
+teensy-loader-cli -w --mcu=mk20dx256 blink.hex
 ```
 
 ## References

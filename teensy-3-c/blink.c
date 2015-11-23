@@ -65,22 +65,22 @@ void (* const _vectors[7])(void) = {
 
 __attribute__ ((section(".flashconfig"), used))
 const unsigned char flashconfigbytes[16] = {
-	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-	0xFF, 0xFF, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFF
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFF
 };
 
 __attribute__ ((section(".startup")))
 void startup() {
-	unsigned long *src = &_sflashdata;
-	unsigned long *dest = &_sdata;
-
   WDOG_UNLOCK  = ((unsigned short)0xC520);
   WDOG_UNLOCK  = ((unsigned short)0xD928);
   WDOG_STCTRLH = ((unsigned short)0x01D2);
 
-	while (dest < &_edata) *dest++ = *src++;
-	dest = &_sbss;
-	while (dest < &_ebss) *dest++ = 0;
+  unsigned long *src = &_sflashdata;
+  unsigned long *dest = &_sdata;
+
+  while (dest < &_edata) *dest++ = *src++;
+  dest = &_sbss;
+  while (dest < &_ebss) *dest++ = 0;
 
   // Enable system clock on all GPIO ports - page 254
   GPIO_CONFIG = ((unsigned short)0x00043F82); // 0b1000011111110000010

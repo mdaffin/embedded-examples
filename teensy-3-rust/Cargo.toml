@@ -1,0 +1,8 @@
+[package]
+name = "test"
+version = "0.1.0"
+authors = ["Branan Riley <branan@puppetlabs.com>"]
+build = "build.rs"
+
+[target.thumbv7em-none-eabi.dependencies.core]
+git = "https://github.com/hackndev/rust-libcore"

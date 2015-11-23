@@ -1,5 +1,6 @@
 #![feature(lang_items,no_std,core_intrinsics,asm)]
 #![no_std]
+#![no_main]
 #![crate_type="staticlib"]
 
 use core::intrinsics::{volatile_store};
@@ -7,7 +8,8 @@ use core::intrinsics::{volatile_store};
 #[lang="stack_exhausted"] extern fn stack_exhausted() {}
 #[lang="eh_personality"] extern fn eh_personality() {}
 #[lang="panic_fmt"]
-pub fn panic_fmt(_fmt: &core::fmt::Arguments, _file_line: &(&'static str, usize)) -> !
+#[no_mangle]
+pub fn rust_begin_unwind(_fmt: &core::fmt::Arguments, _file_line: &(&'static str, usize)) -> !
 {
     loop {}
 }

@@ -4,5 +4,9 @@ version = "0.1.0"
 authors = ["Branan Riley <branan@puppetlabs.com>"]
 build = "build.rs"
 
+[profile.release]
+opt-level = 1
+debug = false
+
 [target.thumbv7em-none-eabi.dependencies.core]
 git = "https://github.com/hackndev/rust-libcore"

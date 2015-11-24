@@ -1,6 +1,5 @@
-#![feature(lang_items,no_std,core_intrinsics,asm)]
+#![feature(lang_items,no_std,start,core_intrinsics,asm,main)]
 #![no_std]
-#![no_main]
 #![crate_type="staticlib"]
 
 use core::intrinsics::{volatile_store};
@@ -9,19 +8,19 @@ use core::intrinsics::{volatile_store};
 #[lang="eh_personality"] extern fn eh_personality() {}
 #[lang="panic_fmt"]
 #[no_mangle]
-pub fn rust_begin_unwind(_fmt: &core::fmt::Arguments, _file_line: &(&'static str, usize)) -> !
+pub extern fn rust_begin_unwind(_fmt: &core::fmt::Arguments, _file_line: &(&'static str, usize)) -> !
 {
     loop {}
 }
 
 #[no_mangle]
-pub unsafe fn __aeabi_unwind_cpp_pr0() -> ()
+pub extern fn __aeabi_unwind_cpp_pr0() -> ()
 {
     loop {}
 }
 
 #[no_mangle]
-pub unsafe fn __aeabi_unwind_cpp_pr1() -> ()
+pub extern fn __aeabi_unwind_cpp_pr1() -> ()
 {
     loop {}
 }
@@ -137,6 +136,23 @@ pub fn rust_loop() {
         delay(1000);
     }
 }
+
+#[main]
+fn main() {
+    unsafe{
+      startup();
+    }
+}
+
+#[start]
+fn start(_: isize, _: *const *const u8) -> isize {
+    main();
+    unsafe{
+      startup();
+    }
+    0
+}
+
 
 pub unsafe extern fn isr_nmi() { loop {} }
 pub unsafe extern fn isr_hardfault() { loop {} }

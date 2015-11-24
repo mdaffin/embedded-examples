@@ -16,6 +16,6 @@
         "-Tlayout.ld"
     ],
     "post-link-args": [
-        "-lm", "-lgcc", "-lnosys"
+        "-nostdlib", "-nostartfiles"
     ]
 }

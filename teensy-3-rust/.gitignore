@@ -2,5 +2,5 @@
 *.elf
 *.hex
 *.o
-libcore-thumbv7em/
-rust/
+target
+Cargo.lock

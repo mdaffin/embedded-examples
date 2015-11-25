@@ -77,7 +77,7 @@ pub static flashconfigbytes: [usize; 4] = [
 #[link_section=".startup"]
 #[allow(dead_code)]
 #[no_mangle]
-pub unsafe extern fn startup() {
+pub unsafe extern "C" fn startup() {
     let mut src: *mut u32 = &mut _etext;
     let mut dest: *mut u32 = &mut _sdata;
 

@@ -112,7 +112,8 @@ void led_off() {
 }
 
 void delay(int ms) {
-  for (unsigned int i = 0; i <= ms * 2500; i++) {;}
+  volatile unsigned int i;
+  for (i = 0; i <= ms * 2500; i++) {;}
 }
 
 void nim_handler() { while (1); }

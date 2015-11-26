@@ -1,4 +1,4 @@
-#![feature(lang_items,no_std,core_intrinsics,asm)]
+#![feature(lang_items,no_std,core_intrinsics,asm,start)]
 #![no_std]
 #![crate_type="staticlib"]
 
@@ -143,8 +143,8 @@ fn main() {
     }
 }
 
-#[lang = "start"]
-fn lang_start(_: *const u8, _: isize, _: *const *const u8) -> isize {
+#[start]
+fn lang_start(_: isize, _: *const *const u8) -> isize {
     main();
     0
 }

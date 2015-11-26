@@ -1,4 +1,4 @@
-#![feature(lang_items,no_std,start,core_intrinsics,asm,main)]
+#![feature(lang_items,no_std,core_intrinsics,asm)]
 #![no_std]
 #![crate_type="staticlib"]
 
@@ -137,19 +137,15 @@ pub fn rust_loop() {
     }
 }
 
-#[main]
 fn main() {
-    unsafe{
-      startup();
+    unsafe {
+        startup();
     }
 }
 
-#[start]
-fn start(_: isize, _: *const *const u8) -> isize {
+#[lang = "start"]
+fn lang_start(_: *const u8, _: isize, _: *const *const u8) -> isize {
     main();
-    unsafe{
-      startup();
-    }
     0
 }
 

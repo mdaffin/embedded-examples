@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["Branan Riley <branan@puppetlabs.com>"]
 build = "build.rs"
 
+[profile.dev]
+opt-level = 0
+debug = true
+
 [profile.release]
 opt-level = 1
 debug = false

@@ -1,16 +1,21 @@
 # Rust on the teensy 3.1
 
-This works:
+A bare metal example of blink written in rust for the teensy 3.1
+
+## Requirements
+
+* rustc nightly
+* cargo
+* arm-none-eabi-gcc
+* arm-none-eabi-ar
+* arm-none-eabi-objcopy
+
+## Compile and upload
 
 ```bash
-cargo build -v --target thumbv7em-none-eabi
-arm-none-eabi-objcopy -O ihex -R .eeprom target/thumbv7em-none-eabi/debug/test blink-debug.hex
+cargo build --target thumbv7em-none-eabi
+arm-none-eabi-objcopy -O ihex -R .eeprom target/thumbv7em-none-eabi/debug/test blink.hex
+
+echo "Reset teensy now"
+teensy-loader-cli -w --mcu=mk20dx256 blink.hex
 ```
-
-This produces and empty hex file:
-
-```bash
-cargo build -v --target thumbv7em-none-eabi --release
-arm-none-eabi-objcopy -O ihex -R .eeprom target/thumbv7em-none-eabi/release/test blink-release.hex
-```
-

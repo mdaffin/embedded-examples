@@ -121,7 +121,7 @@ pub fn led_off() {
 }
 
 pub fn delay(ms: i32) {
-    for _ in 0..ms*5000 {
+    for _ in 0..ms*250 {
         unsafe {
             asm!("NOP");
         }

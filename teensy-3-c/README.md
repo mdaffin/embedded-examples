@@ -1,6 +1,6 @@
 # C on the teensy 3.1
 
-This is an example of writing pure c on the teensy 3.1.
+An example of writing pure c on the teensy 3.1.
 
 ## Prerequisites
 You will need the C compiler, linker and objcopy from the arm-none-eabi toolkit:

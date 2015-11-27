@@ -47,7 +47,7 @@ extern {
 #[no_mangle]
 pub static ISRVectors: [Option<unsafe extern fn()>; 16] = [
   Some(_estack),          // Stack pointer
-  Some(main),             // Reset
+  Some(startup),          // Reset
   Some(isr_nmi),          // NMI
   Some(isr_hardfault),    // Hard Fault
   Some(isr_mmfault),      // CM3 Memory Management Fault
@@ -74,7 +74,7 @@ pub static flashconfigbytes: [usize; 4] = [
     0xFFFFFFFE,
 ];
 
-pub unsafe extern fn main() {
+pub unsafe extern fn startup() {
     let mut src: *mut u32 = &mut _etext;
     let mut dest: *mut u32 = &mut _sdata;
 
@@ -137,7 +137,7 @@ pub fn rust_loop() {
 #[start]
 fn lang_start(_: isize, _: *const *const u8) -> isize {
     unsafe {
-        main();
+        startup();
     }
     0
 }

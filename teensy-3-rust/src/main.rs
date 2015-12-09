@@ -34,7 +34,7 @@ macro_rules! GPIOC_PDDR   {() => (0x400FF094 as *mut u32);} // GPIOC_PDDR - page
 macro_rules! GPIOC_PDOR   {() => (0x400FF080 as *mut u32);} // GPIOC_PDOR - page 1334,1335
 
 extern {
-    static mut _etext: u32;
+    static mut _sflashdata: u32;
     static mut _sdata: u32;
     static mut _edata: u32;
     static mut _sbss: u32;
@@ -75,7 +75,7 @@ pub static flashconfigbytes: [usize; 4] = [
 ];
 
 pub unsafe extern fn startup() {
-    let mut src: *mut u32 = &mut _etext;
+    let mut src: *mut u32 = &mut _sflashdata;
     let mut dest: *mut u32 = &mut _sdata;
 
     volatile_store(WDOG_UNLOCK!(), 0xC520);

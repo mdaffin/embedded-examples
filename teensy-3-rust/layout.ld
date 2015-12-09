@@ -26,6 +26,8 @@ programmers manual for the MK20DX256VLH7 which can be found at:
 https://www.pjrc.com/teensy/K20P64M72SF1RM.pdf
 */
 
+_sflashdata = LOADADDR(.data);
+
 MEMORY {
     FLASH (rx) : ORIGIN = 0x00000000, LENGTH = 256K
     RAM  (rwx) : ORIGIN = 0x1FFF8000, LENGTH = 64K /* page 90 */
@@ -41,7 +43,6 @@ SECTIONS {
         *(.text*)
         *(.rodata*)
         . = ALIGN(4);
-        _etext = .;
     } > FLASH
 
     .data : {

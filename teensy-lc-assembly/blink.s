@@ -21,26 +21,23 @@ THE SOFTWARE.
 */
 
 /*
-Blink demo in assembler for the teensy 3.1.
+Blink demo in assembler for the teensy LC.
 
-This text refers to the programmers manual for the MK20DX256VLH7. You can
-obtain it from: https://www.pjrc.com/teensy/K20P64M72SF1RM.pdf
+This text refers to the programmers manual for the MKL26Z64VFT4. You can
+obtain it from: https://www.pjrc.com/teensy/KL26P121M48SF4RM.pdf
 */
 
     .syntax unified
 
     .section ".vectors"
-    // Interrupt vector definitions - page 63
+    // Interrupt vector definitions - page 58
     .long _estack  //  0 ARM: Initial Stack Pointer
     .long _startup //  1 ARM: Initial Program Counter
     .long _halt    //  2 ARM: Non-maskable Interrupt (NMI)
     .long _halt    //  3 ARM: Hard Fault
-    .long _halt    //  4 ARM: MemManage Fault
-    .long _halt    //  5 ARM: Bus Fault
-    .long _halt    //  6 ARM: Usage Fault
-  
+
     .section ".flashconfig"
-    // Flash Configuration located at 0x400 - page 569
+    // Flash Configuration located at 0x400 - page 443
     .long   0xFFFFFFFF
     .long   0xFFFFFFFF
     .long   0xFFFFFFFF
@@ -52,48 +49,41 @@ obtain it from: https://www.pjrc.com/teensy/K20P64M72SF1RM.pdf
     .global _startup
 _startup:
     // Zero all the registers
-    mov     r0,#0
-    mov     r1,#0
-    mov     r2,#0
-    mov     r3,#0
-    mov     r4,#0
-    mov     r5,#0
-    mov     r6,#0
-    mov     r7,#0
-    mov     r8,#0
-    mov     r9,#0
-    mov     r10,#0
-    mov     r11,#0
-    mov     r12,#0
+    movs r0,#0
+    mov r1,r0
+    mov r2,r0
+    mov r3,r0
+    mov r4,r0
+    mov r5,r0
+    mov r6,r0
+    mov r7,r0
+    mov r8,r0
+    mov r9,r0
+    mov r10,r0
+    mov r11,r0
+    mov r12,r0
 
-    cpsid i // Disable interrupts
+/*    cpsid i // Disable interrupts*/
 
-    // Unlock watchdog - page 478
-    ldr r6, = 0x4005200E // address from page 473
-    ldr r0, = 0xC520
-    strh r0, [r6]
-    ldr r0, = 0xD928
-    strh r0, [r6]
+    // COP Control Register (SIM_COPC) - page 232
+    ldr r6, = 0x40048100 // address from page 208
+    ldr r0, = 0
+    str r0, [r6]
 
-    // Disable watchdog - page 468
-    ldr r6, = 0x40052000 // address from page 473
-    ldr r0, = 0x01D2
-    strh r0, [r6]
+/*    cpsie i // Enable interrupts*/
 
-    cpsie i // Enable interrupts
-
-    // Enable system clock on all GPIO ports - page 254
-    ldr r6, = 0x40048038 
+    // Enable system clock on all GPIO ports - page 222
+    ldr r6, = 0x40048038
     ldr r0, = 0x00043F82 // 0b1000011111110000010
     str r0, [r6]
 
     // Configure the led pin
-    ldr r6, = 0x4004B014 // PORTC_PCR5 - page 223/227
-    ldr r0, = 0x00000143 // Enables GPIO | DSE | PULL_ENABLE | PULL_SELECT - page 227
+    ldr r6, = 0x4004B014 // PORTC_PCR5 - page 196
+    ldr r0, = 0x00000143 // Enables GPIO | DSE | PULL_ENABLE | PULL_SELECT - page 200,201
     str r0, [r6]
 
     // Set the led pin to output
-    ldr r6, = 0x400FF094 // GPIOC_PDDR - page 1334,1337
+    ldr r6, = 0x400FF094 // GPIOC_PDDR - page 842
     ldr r0, = 0x20 // pin 5 on port c
     str r0, [r6]
 
@@ -109,7 +99,7 @@ loop:
     .thumb_func
     .global led_off
 led_off:
-    ldr r6, = 0x400FF080 // GPIOC_PDOR - page 1334,1335
+    ldr r6, = 0x400FF080 // GPIOC_PDOR - page 842,843
     ldr r0, = 0x0
     str r0, [r6]
     mov pc, r14
@@ -118,7 +108,7 @@ led_off:
     .thumb_func
     .global led_on
 led_on:
-    ldr r6, = 0x400FF080 // GPIOC_PDOR - page 1334,1335
+    ldr r6, = 0x400FF080 // GPIOC_PDOR - page 842,843
     ldr r0, = 0x20
     str r0, [r6]
     mov pc, r14
@@ -129,7 +119,7 @@ led_on:
 delay:
     ldr r1, = 0x2625A0
 delay_loop:
-    sub r1, r1, #1
+    subs r1, r1, #1
     cmp r1, #0
     bne delay_loop
     mov pc, r14

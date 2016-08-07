@@ -1,6 +1,8 @@
-# Assembler on the teensy 3.1
+# Assembler on the teensy LC
 
-This is an example of writing pure assembler on the teensy 3.1. It is based of the example by [glock45](https://forum.pjrc.com/threads/25762-Turn-the-LED-on-with-assembler-code-\(-Teensy-3-1-\)?p=47739&viewfull=1#post47739).
+This is an example of writing pure assembler on the teensy LC.
+It is based on the one for teensy 3.1.
+See ../teensy-3-assembly/README.md
 
 ## Prerequisites
 You will need the assembler, linker and objcopy from the arm-none-eabi toolkit:
@@ -16,21 +18,8 @@ You will also need the teensy-loader or teensy-loader-cli which you can get [her
 The linker script tells the linker where to place the various bits of code. For more details see [this tutorial](http://bravegnu.org/gnu-eprog/linker.html)
 
 ## Assembler code - blink.s
-A minimal example of the assembler needed to drive the led on a teensy 3.1. It only initlises parts of the arm chip that are needed to blink the led in order to make it easier to understand. For a more complete example see the the example by [karl lunt](http://www.seanet.com/~karllunt/bareteensy31.html).
+A minimal example of the assembler needed to drive the led on a teensy LC. It only initlises parts of the arm chip that are needed to blink the led in order to make it easier to understand. For a more complete example see the the example by [karl lunt](http://www.seanet.com/~karllunt/bareteensy31.html).
 
 ## Compile and upload
 
-To compile and upload to the teensy run:
-
-```bash
-arm-none-eabi-as -g -mcpu=cortex-m4 -mthumb -o blink.o blink.s
-arm-none-eabi-ld -T layout.ld -o blink.elf blink.o
-arm-none-eabi-objcopy -O ihex -R .eeprom blink.elf blink.hex
-echo "Reset teensy now"
-teensy-loader-cli -w --mcu=mk20dx256 blink.hex
-```
-
-## References
-1. [Turn the LED on with assembler code ( Teensy 3.1 )](https://forum.pjrc.com/threads/25762-Turn-the-LED-on-with-assembler-code-\(-Teensy-3-1-\)?p=47739&viewfull=1#post47739)
-1. [Embedded Programming with the GNU Toolchain](http://bravegnu.org/gnu-eprog/)
-2. [Bare-metal Teensy 3.x Development](http://www.seanet.com/~karllunt/bareteensy31.html)
+To compile and upload to the teensy, run `make`.

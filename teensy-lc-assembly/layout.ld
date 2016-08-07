@@ -21,20 +21,21 @@ THE SOFTWARE.
 */
 
 /*
-A very basic linker script for the teensy 3.1. Page references refer to the
-programmers manual for the MK20DX256VLH7 which can be found at:
-https://www.pjrc.com/teensy/K20P64M72SF1RM.pdf
+A very basic linker script for the teensy LC. Page references refer to the
+programmers manual for the MKL26Z64VFT4 which can be found at:
+https://www.pjrc.com/teensy/KL26P121M48SF4RM.pdf
 */
 
 MEMORY {
-    FLASH (rx) : ORIGIN = 0x00000000, LENGTH = 256K
-    RAM  (rwx) : ORIGIN = 0x1FFF8000, LENGTH = 64K /* page 90 */
+    FLASH (rx) : ORIGIN = 0x00000000, LENGTH = 62K /* page 79 */
+    RAM  (rwx) : ORIGIN = 0x1FFFF800, LENGTH = 8K /* page 82 */
+
 }
 
 SECTIONS {
     . = 0x00000000;
     .text : {
-        KEEP(*(.vectors)) /* vectors must be placed first - page 63*/
+        KEEP(*(.vectors)) /* vectors must be placed first - page 58*/
         . = 0x400;
         KEEP(*(.flashconfig*)) /* flash configuration starts at 0x400 - page 569 */
         *(.startup)
